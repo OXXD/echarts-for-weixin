@@ -1,3 +1,11 @@
+/*
+ * @Descripttion: 
+ * @version: 1.0
+ * @Author: linrenxin
+ * @Date: 2021-07-11 17:48:28
+ * @LastEditors: linrenxin
+ * @LastEditTime: 2021-07-11 17:49:55
+ */
 const path = require('path')
 
 const webpack = require('webpack')
@@ -12,7 +20,7 @@ const dev = path.join(demoDist, 'components')
 const dist = path.resolve(__dirname, '../miniprogram_dist')
 
 module.exports = {
-  entry: ['index', 'lib'],
+  entry: ['index'],
 
   isDev,
   isWatch,
@@ -92,5 +100,5 @@ module.exports = {
     }
   },
 
-  copy: ['./assets', './utils.js'], // 将会复制到目标目录
+  copy: [], // 将会复制到目标目录
 }
