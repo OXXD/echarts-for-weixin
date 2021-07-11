@@ -1,5 +1,4 @@
 import WxCanvas from './wx-canvas';
-import * as echarts from './echarts';
 
 let ctx;
 
@@ -35,6 +34,10 @@ Component({
       value: 'ec-canvas'
     },
 
+    echarts: {
+      type: Object
+    },
+
     ec: {
       type: Object
     },
@@ -50,9 +53,14 @@ Component({
   },
 
   ready: function () {
+    if (!this.data.echarts) {
+      console.warn('组件需要传入 echarts')
+      return;
+    }
+
     // Disable prograssive because drawImage doesn't support DOM as parameter
     // See https://developers.weixin.qq.com/miniprogram/dev/api/canvas/CanvasContext.drawImage.html
-    echarts.registerPreprocessor(option => {
+    this.data.echarts.registerPreprocessor(option => {
       if (option && option.series) {
         if (option.series.length > 0) {
           option.series.forEach(series => {
@@ -112,7 +120,7 @@ Component({
       ctx = wx.createCanvasContext(this.data.canvasId, this);
       const canvas = new WxCanvas(ctx, this.data.canvasId, false);
 
-      echarts.setCanvasCreator(() => {
+      this.data.echarts.setCanvasCreator(() => {
         return canvas;
       });
       // const canvasDpr = wx.getSystemInfoSync().pixelRatio // 微信旧的canvas不能传入dpr
@@ -153,7 +161,7 @@ Component({
           const ctx = canvasNode.getContext('2d')
 
           const canvas = new WxCanvas(ctx, this.data.canvasId, true, canvasNode)
-          echarts.setCanvasCreator(() => {
+          this.data.echarts.setCanvasCreator(() => {
             return canvas
           })
 
