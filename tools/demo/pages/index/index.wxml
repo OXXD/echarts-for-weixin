@@ -1,1 +1,8 @@
-<comp></comp>
+<view class="main">
+  <view class="wrapper">
+    <button type="primary" bindtap="onClickBar">echarts-for-weixin 示例</button>
+  </view>
+  <view class="wrapper">
+    <button type="primary" bindtap="onClickManualLoad">按需加载示例</button>
+  </view>
+</view>
