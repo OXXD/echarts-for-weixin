@@ -1,131 +1,614 @@
-# miniprogram-custom-component
+# 在微信小程序中通过 npm 引入 ECharts
 
-小程序自定义组件开发模板：
+Apache ECharts 官方提供了[在微信小程序中使用Echarts] 的代码实例和 `ec-canvas` 组件，但是未发布 `npm` 包。
 
-* 支持使用 less 语法编写 wxss 文件
-* 使用 webpack 构建 js
-* 支持自定义组件单元测试
-* 支持 eslint
-* 支持多入口构建
+此项目在官方代码之上修改支持 `ec-canvas` 组件传入 `echarts` 可支持 `npm` 引入 `echarts` 或本地自定义构建后的 `echarts`，更符合 `Web` 开发体验。
 
-## 使用
+并且发布 `npm` 包，支持小程序通过 npm 安装使用。并支持 `Taro` 按需引入 `echarts` 减小打包体积。
 
-* 使用[命令行工具](https://github.com/wechat-miniprogram/miniprogram-cli)进行初始化
-* 直接从 github 上 clone 下来
+## 安装
 
-## 开发
-
-1. 安装依赖：
-
-```
-npm install
+```bash
+npm install echarts-for-weixin
 ```
 
-2. 执行命令：
+## 小程序引用
 
-```
-npm run dev
-```
+参考代码 `tools/demo`
 
-默认会在包根目录下生成 miniprogram\_dev 目录，src 中的源代码会被构建并生成到 miniprogram\_dev/components 目录下。如果需要监听文件变化动态构建，则可以执行命令：
+1. 首先在页面的 json 文件加入 usingComponents 配置字段
 
-```
-npm run watch
-```
+```json
+{
+  usingComponents: {
+    'ec-canvas': 'echarts-for-weixin' // 书写第三方组件的相对路径
+  }
+}
+````
 
-> ps: 如果 minirpogram\_dev 目录下已存在小程序 demo，执行`npm run dev`则不会再将 tools 下的 demo 拷贝到此目录下。而执行`npm run watch`则会监听 tools 目录下的 demo 变动并进行拷贝。
+2. 项目根目录创建 `package.json` 并执行 npm install 安装依赖
 
-3. 生成的 miniprogram\_dev 目录是一个小程序项目目录，以此目录作为小程序项目目录在开发者工具中打开即可查看自定义组件被使用的效果。
-
-4. 进阶：
-
-* 如果有额外的构建需求，可自行修改 tools 目录中的构建脚本。
-* 内置支持 webpack、less 语法、sourcemap 等功能，默认关闭。如若需要可以自行修改 tools/config.js 配置文件中相关配置。
-* 内置支持多入口构建，如若需要可自行调整 tools/config.js 配置文件的 entry 字段。
-* 默认开启 eslint，可自行调整规则或在 tools/config.js 中注释掉 eslint-loader 行来关闭此功能。
-
-## 发布
-
-> ps: 发布前得确保已经执行构建，小程序 npm 包只有构建出来的目录是真正被使用到的。
-
-1. 如果还没有 npm 帐号，可以到[ npm 官网](https://www.npmjs.com/)注册一个 npm 帐号。
-2. 在本地登录 npm 帐号，在本地执行：
-
-```
-npm adduser
+```json
+{
+  "dependencies": {
+    "echarts": "^5.1.2",
+    "echarts-for-weixin": "^1.0.0"
+  }
+}
 ```
 
-或者
+3. 小程序开发者工具中构建 npm
 
-```
-npm login
-```
+点击开发者工具中的菜单栏：工具 --> 构建 npm
 
-3. 在已完成编写的 npm 包根目录下执行：
+![construction](./docs/construction.png)
 
-```
-npm publish
-```
+4. 在页面中引入 `echarts`，可以从 `npm` 引入 `echarts`，也可以引入本地自定义构建的 `echarts` 以减小体积
 
-到此，npm 包就成功发布到 npm 平台了。
-
-> PS：一些开发者在开发过程中可能修改过 npm 的源，所以当进行登录或发布时需要注意要将源切回 npm 的源。
-
-## 目录结构
-
-以下为推荐使用的目录结构，如果有必要开发者也可以自行做一些调整:
-
-```
-|--miniprogram_dev // 开发环境构建目录
-|--miniprogram_dist // 生产环境构建目录
-|--src // 源码
-|   |--components // 通用自定义组件
-|   |--images // 图片资源
-|   |
-|   |--xxx.js/xxx.wxml/xxx.json/xxx.wxss // 暴露的 js 模块/自定义组件入口文件
-|
-|--test // 测试用例
-|--tools // 构建相关代码
-|   |--demo // demo 小程序目录，开发环境下会被拷贝生成到 miniprogram_dev 目录中
-|   |--config.js // 构建相关配置文件
-|
-|--gulpfile.js
+```js
+import * as echarts from 'echarts' // 从 npm 引入 echarts
+import * as echarts from './echarts' // 或者从本地引入自定义构建的 echarts
 ```
 
-> PS：对外暴露的 js 模块/自定义组件请放在 src 目录下，不宜放置在过深的目录。另外新增的暴露模块需要在 tools/config.js 的 entry 字段中补充，不然不会进行构建。
+5. 然后可以在对应页面的 wxml 中直接使用该组件
 
-## 测试
-
-* 执行测试用例：
-
-```
-npm run test
+```wxml
+<view class="container">
+  <ec-canvas id="mychart-dom-bar" canvas-id="mychart-bar" echarts="{{ echarts }}" ec="{{ ec }}"></ec-canvas>
+</view>
 ```
 
-* 执行测试用例并进入 node inspect 调试：
+6. `ec-canvas` 的具体用法和如何初始化图表请参考 [Echarts 官方小程序示例](https://github.com/ecomfe/echarts-for-weixin#%E5%88%9B%E5%BB%BA%E5%9B%BE%E8%A1%A8)
 
+<details>
+
+<summary>示例代码</summary>
+
+```js
+import * as echarts from 'echarts'
+
+let chart = null;
+
+function initChart(canvas, width, height, dpr) {
+  chart = echarts.init(canvas, null, {
+    width: width,
+    height: height,
+    devicePixelRatio: dpr // new
+  });
+  canvas.setChart(chart);
+
+  var option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+        type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+      },
+      confine: true
+    },
+    legend: {
+      data: ['热度', '正面', '负面']
+    },
+    grid: {
+      left: 20,
+      right: 20,
+      bottom: 15,
+      top: 40,
+      containLabel: true
+    },
+    xAxis: [
+      {
+        type: 'value',
+        axisLine: {
+          lineStyle: {
+            color: '#999'
+          }
+        },
+        axisLabel: {
+          color: '#666'
+        }
+      }
+    ],
+    yAxis: [
+      {
+        type: 'category',
+        axisTick: { show: false },
+        data: ['汽车之家', '今日头条', '百度贴吧', '一点资讯', '微信', '微博', '知乎'],
+        axisLine: {
+          lineStyle: {
+            color: '#999'
+          }
+        },
+        axisLabel: {
+          color: '#666'
+        }
+      }
+    ],
+    series: [
+      {
+        name: '热度',
+        type: 'bar',
+        label: {
+          normal: {
+            show: true,
+            position: 'inside'
+          }
+        },
+        data: [300, 270, 340, 344, 300, 320, 310],
+        itemStyle: {
+          // emphasis: {
+          //   color: '#37a2da'
+          // }
+        }
+      },
+      {
+        name: '正面',
+        type: 'bar',
+        stack: '总量',
+        label: {
+          normal: {
+            show: true
+          }
+        },
+        data: [120, 102, 141, 174, 190, 250, 220],
+        itemStyle: {
+          // emphasis: {
+          //   color: '#32c5e9'
+          // }
+        }
+      },
+      {
+        name: '负面',
+        type: 'bar',
+        stack: '总量',
+        label: {
+          normal: {
+            show: true,
+            position: 'left'
+          }
+        },
+        data: [-20, -32, -21, -34, -90, -130, -110],
+        itemStyle: {
+          // emphasis: {
+          //   color: '#67e0e3'
+          // }
+        }
+      }
+    ]
+  };
+
+  chart.setOption(option);
+  return chart;
+}
+
+Page({
+  data: {
+    echarts,
+    ec: {
+      onInit: initChart
+    }
+  },
+  onReady() {
+    setTimeout(function () {
+      // 获取 chart 实例的方式
+      console.log(chart)
+    }, 2000);
+  }
+})
 ```
-npm run test-debug
+
+</details>
+
+## Taro 引用
+
+参考代码 `examples/taro`
+
+### 准备工作
+
+1. 安装依赖
+
+```bash
+npm install echarts-for-weixin
 ```
 
-* 检测覆盖率：
+2. 在项目根目录中新建文件 `project.package.json` 或者自定义命名，此文件是小程序的 `package.json`，并在下一步中添加小程序自定义构建 npm 方式。这么做的目的是为了能够共享项目 `node_modules`
 
+3. 在 `project.config` 的 `setting` 中添加小程序自定义构建 npm 方式，参考 [自定义 node_modules 和 miniprogram_npm 位置的构建 npm 方式](https://developers.weixin.qq.com/miniprogram/dev/devtools/npm.html#%E8%87%AA%E5%AE%9A%E4%B9%89-node-modules-%E5%92%8C-miniprogram-npm-%E4%BD%8D%E7%BD%AE%E7%9A%84%E6%9E%84%E5%BB%BA-npm-%E6%96%B9%E5%BC%8F)
+
+```json
+{
+	"setting": {
+    "packNpmManually": true,
+    "packNpmRelationList": [
+      {
+        "packageJsonPath": "../project.package.json",
+        "miniprogramNpmDistDir": "./"
+      }
+    ]
+	}
+}
 ```
-npm run coverage
+
+4. 执行 `Taro` 的开发或者打包命令进行项目开发
+
+```bash
+npm run dev:weapp
 ```
 
-测试用例放在 test 目录下，使用 **miniprogram-simulate** 工具集进行测试，[点击此处查看](https://github.com/wechat-miniprogram/miniprogram-simulate/blob/master/README.md)使用方法。在测试中可能需要变更或调整工具集中的一些方法，可在 test/utils 下自行实现。
+5. 小程序开发者工具中构建 npm。注意：小程序开发工具打开的项目目录是 `dist` 文件夹
 
-## 其他命令
+点击开发者工具中的菜单栏：工具 --> 构建 npm
 
-* 清空 miniprogram_dist 目录：
+![construction](./docs/construction.png)
 
+### 引入 Echarts
+
+1. 在全局的 `app.config.js` 中添加或者在单个需要使用到 `echarts` 的页面配置中添加引用组件
+
+```json
+{
+  usingComponents: {
+    'ec-canvas': 'echarts-for-weixin' // 书写第三方组件的相对路径
+  }
+}
+````
+
+2. 在页面中引入 `echarts`，可以从 `npm` 引入 `echarts`，也可以引入本地自定义构建的 `echarts` 以减小体积
+
+```js
+import * as echarts from 'echarts' // 从 npm 引入 echarts
+import * as echarts from './echarts' // 或者从本地引入自定义构建的 echarts
 ```
-npm run clean
+
+3. 将引入的 `echarts` 传给组件
+
+```js
+<ec-canvas 
+  id='mychart-dom-area' 
+  canvas-id='mychart-area' 
+  echarts={echarts} // 将引入的 echarts 传给组件
+  ec={this.state.ec}
+/>
 ```
 
-* 清空 miniprogam_dev 目录：
+4. `ec-canvas` 的具体用法和如何初始化图表请参考 [Echarts 官方小程序示例](https://github.com/ecomfe/echarts-for-weixin#%E5%88%9B%E5%BB%BA%E5%9B%BE%E8%A1%A8)
 
+<details>
+
+<summary>示例代码</summary>
+
+```js
+function initChart(canvas, width, height) {
+  const chart = echarts.init(canvas, null, {
+    width: width,
+    height: height
+  })
+  canvas.setChart(chart)
+  const model = {
+    yCates: ['Saturday', 'Friday', 'Thursday',
+      'Wednesday', 'Tuesday', 'Monday',
+      'Sunday'],
+    xCates: ['1', '2', '3', '4', '5'],
+    data: [
+      // [yCateIndex, xCateIndex, value]
+      [0, 0, 5], [0, 1, 7], [0, 2, 3], [0, 3, 5], [0, 4, 2],
+      [1, 0, 1], [1, 1, 2], [1, 2, 4], [1, 3, 8], [1, 4, 2],
+      [2, 0, 2], [2, 1, 3], [2, 2, 8], [2, 3, 6], [2, 4, 7],
+      [3, 0, 3], [3, 1, 7], [3, 2, 5], [3, 3, 1], [3, 4, 6],
+      [4, 0, 3], [4, 1, 2], [4, 2, 7], [4, 3, 8], [4, 4, 9],
+      [5, 0, 2], [5, 1, 2], [5, 2, 3], [5, 3, 4], [5, 4, 7],
+      [6, 0, 6], [6, 1, 5], [6, 2, 3], [6, 3, 1], [6, 4, 2]
+    ]
+  }
+
+  const data = model.data.map(function (item) {
+    return [item[1], item[0], item[2] || '-']
+  })
+
+  const option = {
+    tooltip: {
+      position: 'top'
+    },
+    animation: false,
+    grid: {
+      bottom: 60,
+      top: 10,
+      left: 80
+    },
+    xAxis: {
+      type: 'category',
+      data: model.xCates
+    },
+    yAxis: {
+      type: 'category',
+      data: model.yCates
+    },
+    visualMap: {
+      min: 1,
+      max: 10,
+      show: false,
+      calculable: true,
+      orient: 'horizontal',
+      left: 'center',
+      bottom: 10,
+      inRange: {
+        color: ['#37A2DA', '#32C5E9', '#67E0E3', '#91F2DE', '#FFDB5C', '#FF9F7F'],
+      }
+    },
+    series: [{
+      name: 'Punch Card',
+      type: 'heatmap',
+      data: data,
+      label: {
+        normal: {
+          show: true
+        }
+      },
+      itemStyle: {
+        emphasis: {
+          shadowBlur: 10,
+          shadowColor: 'rgba(0, 0, 0, 0.5)'
+        }
+      }
+    }]
+  }
+
+  chart.setOption(option)
+  return chart
+}
+
+export default class Echarts extends React.Component {
+
+  state = {
+    ec: {
+      onInit: initChart
+    }
+  }
+
+  render () {
+    return (
+      <View className='echarts'>
+        <ec-canvas 
+          id='mychart-dom-area' 
+          canvas-id='mychart-area' 
+          echarts={echarts} 
+          ec={this.state.ec}
+        />
+      </View>
+    )
+  }
+}
 ```
-npm run clean-dev
+
+</details>
+
+## Taro 按需引用文档
+
+参考代码 `examples/taro-manual-load`
+
+注意：小程序开发者工具打开的项目目录是打包后的 `dist` 目录
+
+### 准备工作
+
+1. 安装依赖
+
+```bash
+npm install echarts-for-weixin
 ```
+
+2. 在项目根目录中新建文件 `project.package.json` 或者自定义命名，此文件是小程序的 `package.json`，并在下一步中添加小程序自定义构建 npm 方式。并配置 `config/index.js` 中的 `copy` 选项，将 `project.package.json` 复制到 `dist` 目录下并且重命名为 `package.json`。并且复制 `node_modules/echarts-for-weixin` 至 `dist/node_modules/echarts-for-weixin` 避免在小程序开发者工具中打开的项目重新安装依赖
+
+`config/index.js`
+
+```js
+{
+  copy: {
+    patterns: [
+      { from: 'project.package.json', to: 'dist/package.json' }, // 指定需要 copy 的文件
+      { from: 'node_modules/echarts-for-weixin/', to: 'dist/node_modules/echarts-for-weixin/' }
+    ],
+    options: {}
+  }
+}
+```
+
+3. 在 `project.config` 的 `setting` 中添加小程序自定义构建 npm 方式，参考 [自定义 node_modules 和 miniprogram_npm 位置的构建 npm 方式](https://developers.weixin.qq.com/miniprogram/dev/devtools/npm.html#%E8%87%AA%E5%AE%9A%E4%B9%89-node-modules-%E5%92%8C-miniprogram-npm-%E4%BD%8D%E7%BD%AE%E7%9A%84%E6%9E%84%E5%BB%BA-npm-%E6%96%B9%E5%BC%8F)
+
+```json
+{
+	"setting": {
+    "packNpmManually": true,
+    "packNpmRelationList": [
+      {
+        "packageJsonPath": "./package.json",
+        "miniprogramNpmDistDir": "./"
+      }
+    ]
+	}
+}
+```
+
+4. 执行 `Taro` 的开发或者打包命令进行项目开发
+
+```bash
+npm run dev:weapp
+```
+
+5. 小程序开发者工具中构建 npm。注意：小程序开发工具打开的项目目录是 `dist` 文件夹
+
+点击开发者工具中的菜单栏：工具 --> 构建 npm
+
+![construction](./docs/construction.png)
+
+### 引入 Echarts
+
+1. 在全局的 `app.config.js` 中添加或者在单个需要使用到 `echarts` 的页面配置中添加引用组件
+
+```json
+{
+  usingComponents: {
+    'ec-canvas': 'echarts-for-weixin' // 书写第三方组件的相对路径
+  }
+}
+````
+
+2. 在页面中引入 `echarts/core` 和需要的组件，Taro 打包会只打包引入的组件，这样达到按需引入的目的
+
+```js
+import * as echarts from 'echarts/core'
+// Import charts, all with Chart suffix
+import {
+  BarChart,
+  HeatmapChart,
+} from 'echarts/charts';
+// import components, all suffixed with Component
+import {
+  GridComponent,
+  TooltipComponent,
+  TitleComponent,
+  VisualMapComponent,
+  VisualMapContinuousComponent,
+  VisualMapPiecewiseComponent,
+} from 'echarts/components';
+// Import renderer, note that introducing the CanvasRenderer or SVGRenderer is a required step
+import {
+  CanvasRenderer,
+} from 'echarts/renderers';
+// Register the required components
+echarts.use(
+  [TitleComponent, TooltipComponent, GridComponent, BarChart, CanvasRenderer, HeatmapChart, VisualMapComponent,
+    VisualMapContinuousComponent,
+    VisualMapPiecewiseComponent,]
+);
+```
+
+3. 将引入的 `echarts` 传给组件
+
+```js
+<ec-canvas 
+  id='mychart-dom-area' 
+  canvas-id='mychart-area' 
+  echarts={echarts} // 将引入的 echarts 传给组件
+  ec={this.state.ec}
+/>
+```
+
+4. `ec-canvas` 的具体用法和如何初始化图表请参考 [Echarts 官方小程序示例](https://github.com/ecomfe/echarts-for-weixin#%E5%88%9B%E5%BB%BA%E5%9B%BE%E8%A1%A8)
+
+<details>
+
+<summary>示例代码</summary>
+
+```js
+function initChart(canvas, width, height) {
+  const chart = echarts.init(canvas, null, {
+    width: width,
+    height: height
+  })
+  canvas.setChart(chart)
+  const model = {
+    yCates: ['Saturday', 'Friday', 'Thursday',
+      'Wednesday', 'Tuesday', 'Monday',
+      'Sunday'],
+    xCates: ['1', '2', '3', '4', '5'],
+    data: [
+      // [yCateIndex, xCateIndex, value]
+      [0, 0, 5], [0, 1, 7], [0, 2, 3], [0, 3, 5], [0, 4, 2],
+      [1, 0, 1], [1, 1, 2], [1, 2, 4], [1, 3, 8], [1, 4, 2],
+      [2, 0, 2], [2, 1, 3], [2, 2, 8], [2, 3, 6], [2, 4, 7],
+      [3, 0, 3], [3, 1, 7], [3, 2, 5], [3, 3, 1], [3, 4, 6],
+      [4, 0, 3], [4, 1, 2], [4, 2, 7], [4, 3, 8], [4, 4, 9],
+      [5, 0, 2], [5, 1, 2], [5, 2, 3], [5, 3, 4], [5, 4, 7],
+      [6, 0, 6], [6, 1, 5], [6, 2, 3], [6, 3, 1], [6, 4, 2]
+    ]
+  }
+
+  const data = model.data.map(function (item) {
+    return [item[1], item[0], item[2] || '-']
+  })
+
+  const option = {
+    tooltip: {
+      position: 'top'
+    },
+    animation: false,
+    grid: {
+      bottom: 60,
+      top: 10,
+      left: 80
+    },
+    xAxis: {
+      type: 'category',
+      data: model.xCates
+    },
+    yAxis: {
+      type: 'category',
+      data: model.yCates
+    },
+    visualMap: {
+      min: 1,
+      max: 10,
+      show: false,
+      calculable: true,
+      orient: 'horizontal',
+      left: 'center',
+      bottom: 10,
+      inRange: {
+        color: ['#37A2DA', '#32C5E9', '#67E0E3', '#91F2DE', '#FFDB5C', '#FF9F7F'],
+      }
+    },
+    series: [{
+      name: 'Punch Card',
+      type: 'heatmap',
+      data: data,
+      label: {
+        normal: {
+          show: true
+        }
+      },
+      itemStyle: {
+        emphasis: {
+          shadowBlur: 10,
+          shadowColor: 'rgba(0, 0, 0, 0.5)'
+        }
+      }
+    }]
+  }
+
+  chart.setOption(option)
+  return chart
+}
+
+export default class Echarts extends React.Component {
+
+  state = {
+    ec: {
+      onInit: initChart
+    }
+  }
+
+  render () {
+    return (
+      <View className='echarts'>
+        <ec-canvas 
+          id='mychart-dom-area' 
+          canvas-id='mychart-area' 
+          echarts={echarts} 
+          ec={this.state.ec}
+        />
+      </View>
+    )
+  }
+}
+```
+</details>
+
+5. 可以查看小程序开发者工具中的依赖分析，确定文件大小以及是否正确按需引入
+
+![manual-load](./docs/manual-load.png)
+## 参考链接
+
+- [在微信小程序中使用 Apache ECharts (incubating)](https://github.com/ecomfe/echarts-for-weixin)
+- [npm 支持](https://developers.weixin.qq.com/miniprogram/dev/devtools/npm.html)
+- [开发第三方自定义组件](https://developers.weixin.qq.com/miniprogram/dev/framework/custom-component/trdparty.html)
+- [WeUI 组件库快速上手](https://developers.weixin.qq.com/miniprogram/dev/extended/weui/quickstart.html)
+- [小程序WeUI组件库](https://github.com/wechat-miniprogram/weui-miniprogram)
