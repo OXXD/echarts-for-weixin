@@ -1,6 +1,6 @@
 # 在微信小程序中通过 npm 引入 ECharts
 
-Apache ECharts 官方提供了[在微信小程序中使用Echarts] 的代码实例和 `ec-canvas` 组件，但是未发布 `npm` 包。
+Apache ECharts 官方提供了[在微信小程序中使用Echarts](https://github.com/ecomfe/echarts-for-weixin) 的代码实例和 `ec-canvas` 组件，但是未发布 `npm` 包。
 
 此项目在官方代码之上修改支持 `ec-canvas` 组件传入 `echarts` 可支持 `npm` 引入 `echarts` 或本地自定义构建后的 `echarts`，更符合 `Web` 开发体验。
 
@@ -20,8 +20,8 @@ npm install echarts-for-weixin
 
 ```json
 {
-  usingComponents: {
-    'ec-canvas': 'echarts-for-weixin' // 书写第三方组件的相对路径
+  "usingComponents": {
+    "ec-canvas": "echarts-for-weixin"
   }
 }
 ````
@@ -216,7 +216,7 @@ npm install echarts-for-weixin
 
 ```json
 {
-	"setting": {
+  "setting": {
     "packNpmManually": true,
     "packNpmRelationList": [
       {
@@ -224,7 +224,7 @@ npm install echarts-for-weixin
         "miniprogramNpmDistDir": "./"
       }
     ]
-	}
+  }
 }
 ```
 
@@ -246,8 +246,8 @@ npm run dev:weapp
 
 ```json
 {
-  usingComponents: {
-    'ec-canvas': 'echarts-for-weixin' // 书写第三方组件的相对路径
+  "usingComponents": {
+    "ec-canvas": "echarts-for-weixin"
   }
 }
 ````
@@ -381,7 +381,7 @@ export default class Echarts extends React.Component {
 
 </details>
 
-## Taro 按需引用文档
+## Taro 按需引用
 
 参考代码 `examples/taro-manual-load`
 
@@ -415,7 +415,7 @@ npm install echarts-for-weixin
 
 ```json
 {
-	"setting": {
+  "setting": {
     "packNpmManually": true,
     "packNpmRelationList": [
       {
@@ -423,7 +423,7 @@ npm install echarts-for-weixin
         "miniprogramNpmDistDir": "./"
       }
     ]
-	}
+  }
 }
 ```
 
@@ -445,8 +445,8 @@ npm run dev:weapp
 
 ```json
 {
-  usingComponents: {
-    'ec-canvas': 'echarts-for-weixin' // 书写第三方组件的相对路径
+  "usingComponents": {
+    "ec-canvas": "echarts-for-weixin"
   }
 }
 ````
@@ -454,30 +454,84 @@ npm run dev:weapp
 2. 在页面中引入 `echarts/core` 和需要的组件，Taro 打包会只打包引入的组件，这样达到按需引入的目的
 
 ```js
-import * as echarts from 'echarts/core'
+// Import the echarts core module, which provides the necessary interfaces for using echarts.
+import * as echarts from 'echarts/core';
 // Import charts, all with Chart suffix
 import {
+  // LineChart,
   BarChart,
-  HeatmapChart,
+  // PieChart,
+  // ScatterChart,
+  // RadarChart,
+  // MapChart,
+  // TreeChart,
+  // TreemapChart,
+  // GraphChart,
+  // GaugeChart,
+  // FunnelChart,
+  // ParallelChart,
+  // SankeyChart,
+  // BoxplotChart,
+  // CandlestickChart,
+  // EffectScatterChart,
+  // LinesChart,
+  // HeatmapChart,
+  // PictorialBarChart,
+  // ThemeRiverChart,
+  // SunburstChart,
+  // CustomChart,
 } from 'echarts/charts';
 // import components, all suffixed with Component
 import {
+  // GridSimpleComponent,
   GridComponent,
+  // PolarComponent,
+  // RadarComponent,
+  // GeoComponent,
+  // SingleAxisComponent,
+  // ParallelComponent,
+  // CalendarComponent,
+  // GraphicComponent,
+  // ToolboxComponent,
   TooltipComponent,
+  // AxisPointerComponent,
+  // BrushComponent,
   TitleComponent,
-  VisualMapComponent,
-  VisualMapContinuousComponent,
-  VisualMapPiecewiseComponent,
+  // TimelineComponent,
+  // MarkPointComponent,
+  // MarkLineComponent,
+  // MarkAreaComponent,
+  // LegendComponent,
+  // LegendScrollComponent,
+  // LegendPlainComponent,
+  // DataZoomComponent,
+  // DataZoomInsideComponent,
+  // DataZoomSliderComponent,
+  // VisualMapComponent,
+  // VisualMapContinuousComponent,
+  // VisualMapPiecewiseComponent,
+  // AriaComponent,
+  // TransformComponent,
+  DatasetComponent,
 } from 'echarts/components';
 // Import renderer, note that introducing the CanvasRenderer or SVGRenderer is a required step
 import {
   CanvasRenderer,
+  // SVGRenderer,
 } from 'echarts/renderers';
 // Register the required components
 echarts.use(
-  [TitleComponent, TooltipComponent, GridComponent, BarChart, CanvasRenderer, HeatmapChart, VisualMapComponent,
+  [
+    TitleComponent,
+    TooltipComponent, 
+    GridComponent, 
+    BarChart, 
+    CanvasRenderer, 
+    HeatmapChart, 
+    VisualMapComponent,
     VisualMapContinuousComponent,
-    VisualMapPiecewiseComponent,]
+    VisualMapPiecewiseComponent,
+  ]
 );
 ```
 

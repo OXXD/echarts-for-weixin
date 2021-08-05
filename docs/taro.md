@@ -48,8 +48,8 @@ npm run dev:weapp
 
 ```json
 {
-  usingComponents: {
-    'ec-canvas': 'echarts-for-weixin' // 书写第三方组件的相对路径
+  "usingComponents": {
+    "ec-canvas": "echarts-for-weixin"
   }
 }
 ````
