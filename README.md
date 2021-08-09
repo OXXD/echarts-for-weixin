@@ -212,6 +212,17 @@ npm install echarts-for-weixin
 
 2. 在项目根目录中新建文件 `project.package.json` 或者自定义命名，此文件是小程序的 `package.json`，并在下一步中添加小程序自定义构建 npm 方式。这么做的目的是为了能够共享项目 `node_modules`
 
+`project.package.json`
+
+```json
+{
+  "dependencies": {
+    "echarts": "^5.1.2",
+    "echarts-for-weixin": "^1.0.2"
+  }
+}
+```
+
 3. 在 `project.config` 的 `setting` 中添加小程序自定义构建 npm 方式，参考 [自定义 node_modules 和 miniprogram_npm 位置的构建 npm 方式](https://developers.weixin.qq.com/miniprogram/dev/devtools/npm.html#%E8%87%AA%E5%AE%9A%E4%B9%89-node-modules-%E5%92%8C-miniprogram-npm-%E4%BD%8D%E7%BD%AE%E7%9A%84%E6%9E%84%E5%BB%BA-npm-%E6%96%B9%E5%BC%8F)
 
 ```json
@@ -397,6 +408,16 @@ npm install echarts-for-weixin
 
 2. 在项目根目录中新建文件 `project.package.json` 或者自定义命名，此文件是小程序的 `package.json`，并在下一步中添加小程序自定义构建 npm 方式。并配置 `config/index.js` 中的 `copy` 选项，将 `project.package.json` 复制到 `dist` 目录下并且重命名为 `package.json`。并且复制 `node_modules/echarts-for-weixin` 至 `dist/node_modules/echarts-for-weixin` 避免在小程序开发者工具中打开的项目重新安装依赖
 
+`project.package.json`
+
+```json
+{
+  "dependencies": {
+    "echarts-for-weixin": "^1.0.2"
+  }
+}
+```
+
 `config/index.js`
 
 ```js
@@ -411,7 +432,7 @@ npm install echarts-for-weixin
 }
 ```
 
-3. 在 `project.config` 的 `setting` 中添加小程序自定义构建 npm 方式，参考 [自定义 node_modules 和 miniprogram_npm 位置的构建 npm 方式](https://developers.weixin.qq.com/miniprogram/dev/devtools/npm.html#%E8%87%AA%E5%AE%9A%E4%B9%89-node-modules-%E5%92%8C-miniprogram-npm-%E4%BD%8D%E7%BD%AE%E7%9A%84%E6%9E%84%E5%BB%BA-npm-%E6%96%B9%E5%BC%8F)
+1. 在 `project.config` 的 `setting` 中添加小程序自定义构建 npm 方式，参考 [自定义 node_modules 和 miniprogram_npm 位置的构建 npm 方式](https://developers.weixin.qq.com/miniprogram/dev/devtools/npm.html#%E8%87%AA%E5%AE%9A%E4%B9%89-node-modules-%E5%92%8C-miniprogram-npm-%E4%BD%8D%E7%BD%AE%E7%9A%84%E6%9E%84%E5%BB%BA-npm-%E6%96%B9%E5%BC%8F)
 
 ```json
 {
